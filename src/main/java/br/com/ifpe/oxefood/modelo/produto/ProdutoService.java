@@ -40,4 +40,12 @@ public class ProdutoService {
         produto.setTempoEntregaMinimo(produtoAlterado.getTempoEntregaMinimo());
         produto.setTempoEntregaMaximo(produtoAlterado.getTempoEntregaMaximo());
     }
+
+    @Transactional
+    public void delete(Long id){
+        Produto produto = repository.findById(id).get();
+        produto.setHabilitado(Boolean.FALSE);
+        
+        repository.save(produto);
+    }
 }
