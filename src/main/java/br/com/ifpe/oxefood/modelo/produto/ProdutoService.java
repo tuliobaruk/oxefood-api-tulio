@@ -33,6 +33,7 @@ public class ProdutoService {
     @Transactional
     public void update(Long id, Produto produtoAlterado){
         Produto produto = repository.findById(id).get();
+        produto.setCategoria(produtoAlterado.getCategoria());
         produto.setCodigo(produtoAlterado.getCodigo());
         produto.setTitulo(produtoAlterado.getTitulo());
         produto.setDescricao(produtoAlterado.getDescricao());
