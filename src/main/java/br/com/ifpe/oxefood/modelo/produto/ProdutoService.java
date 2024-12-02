@@ -4,9 +4,11 @@ import jakarta.transaction.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import br.com.ifpe.oxefood.util.exception.EntidadeNaoEncontradaException;
 import br.com.ifpe.oxefood.util.exception.ProdutoException;
 
 @Service
@@ -15,11 +17,20 @@ public class ProdutoService {
     @Autowired
     private ProdutoRepository repository;
 
+    @Autowired
+    private CategoriaProdutoRepository categoriaProdutoRepository;
+
     @Transactional
     public Produto save(Produto produto) {
 
         if (produto.getValorUnitario() < 10) {
             throw new ProdutoException(ProdutoException.MSG_VALOR_MINIMO_PRODUTO);
+        }
+
+        Optional<CategoriaProduto> consultaCategoria = categoriaProdutoRepository.findById(produto.getCategoria().getId());
+
+        if (!consultaCategoria.isPresent()) {
+            throw new EntidadeNaoEncontradaException("categoriaProduto", produto.getCategoria().getId());
         }
 
         produto.setHabilitado(Boolean.TRUE);
