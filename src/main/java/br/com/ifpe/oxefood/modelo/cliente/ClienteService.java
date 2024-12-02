@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.com.ifpe.oxefood.util.exception.ClienteException;
 import br.com.ifpe.oxefood.util.exception.EntidadeNaoEncontradaException;
 import jakarta.transaction.Transactional;
 
@@ -22,6 +23,10 @@ public class ClienteService {
     @Transactional
     public Cliente save(Cliente cliente) {
 
+        if(!(cliente.getFoneCelular().substring(1, 3).equals("81"))){
+            throw new ClienteException(ClienteException.MSG_VALOR_DDD_INVALIDO);
+        }
+        
         cliente.setHabilitado(Boolean.TRUE);
         cliente.setVersao(1L);
         cliente.setDataCriacao(LocalDate.now());
