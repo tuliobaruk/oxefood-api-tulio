@@ -3,6 +3,8 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+## Arquivos da extensão restclient
+*.http
 
 ### STS ###
 .apt_generated
