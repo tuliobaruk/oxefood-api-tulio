@@ -21,18 +21,20 @@ public class ProdutoService {
     private CategoriaProdutoRepository categoriaProdutoRepository;
 
     @Transactional
-    public Produto save(Produto produto) {
+    public Produto save(Produto produto, Long categoriaId) {
 
         if (produto.getValorUnitario() < 10) {
             throw new ProdutoException(ProdutoException.MSG_VALOR_MINIMO_PRODUTO);
         }
 
-        Optional<CategoriaProduto> consultaCategoria = categoriaProdutoRepository.findById(produto.getCategoria().getId());
+        Optional<CategoriaProduto> consultaCategoria = categoriaProdutoRepository.findById(categoriaId);
 
         if (!consultaCategoria.isPresent()) {
             throw new EntidadeNaoEncontradaException("categoriaProduto", produto.getCategoria().getId());
         }
 
+        
+        produto.setCategoria(categoriaProdutoRepository.findById(categoriaId).get());
         produto.setHabilitado(Boolean.TRUE);
         produto.setVersao(1L);
         produto.setDataCriacao(LocalDate.now());

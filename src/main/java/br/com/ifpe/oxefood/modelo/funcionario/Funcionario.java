@@ -28,6 +28,10 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Funcionario extends EntidadeAuditavel {
+
+    @ManyToOne
+    @JoinColumn(nullable = false)
+    private Usuario usuario;
     
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
