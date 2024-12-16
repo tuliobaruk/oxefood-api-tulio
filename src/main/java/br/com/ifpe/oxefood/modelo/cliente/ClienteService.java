@@ -7,6 +7,8 @@ import java.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.com.ifpe.oxefood.modelo.acesso.Perfil;
+import br.com.ifpe.oxefood.modelo.acesso.PerfilRepository;
 import br.com.ifpe.oxefood.modelo.acesso.UsuarioService;
 import br.com.ifpe.oxefood.util.exception.ClienteException;
 import br.com.ifpe.oxefood.util.exception.EntidadeNaoEncontradaException;
@@ -19,6 +21,9 @@ public class ClienteService {
     private ClienteRepository repository;
 
     @Autowired
+    private PerfilRepository perfilUsuarioRepository;
+
+    @Autowired
     private EnderecoClienteRepository enderecoClienteRepository;
 
     @Autowired
@@ -27,15 +32,16 @@ public class ClienteService {
     @Transactional
     public Cliente save(Cliente cliente) {
 
-        if (!(cliente.getFoneCelular().substring(1, 3).equals("81"))) {
-            throw new ClienteException(ClienteException.MSG_VALOR_DDD_INVALIDO);
-        }
-        
         usuarioService.save(cliente.getUsuario());
+
+        for (Perfil perfil : cliente.getUsuario().getRoles()) {
+            perfil.setHabilitado(Boolean.TRUE);
+            perfilUsuarioRepository.save(perfil);
+        }
+
         cliente.setHabilitado(Boolean.TRUE);
-        cliente.setVersao(1L);
-        cliente.setDataCriacao(LocalDate.now());
-        return repository.save(cliente);
+        Cliente clienteSalvo = repository.save(cliente);
+        return clienteSalvo;
     }
 
     public List<Cliente> listarTodos() {
