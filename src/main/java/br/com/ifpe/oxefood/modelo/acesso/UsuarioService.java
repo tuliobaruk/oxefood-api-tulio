@@ -9,10 +9,16 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import br.com.ifpe.oxefood.modelo.seguranca.JwtService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 
 @Service
 public class UsuarioService implements UserDetailsService {
+
+    
+    @Autowired
+    private JwtService jwtService;
 
     @Autowired
     private UsuarioRepository repository;
@@ -47,6 +53,22 @@ public class UsuarioService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         return repository.findByUsername(username).get();
+    }
+
+    public Usuario getCurrentUser(HttpServletRequest request) {
+
+        Usuario loggedUser = null;
+        String authHeader = request.getHeader("Authorization");
+
+        if (authHeader != null) {
+
+            String jwt = authHeader.substring(7);
+            String userEmail = jwtService.extractUsername(jwt);
+            loggedUser = findByUsername(userEmail);
+            return loggedUser;
+        }
+
+        return loggedUser;
     }
 
     @Transactional
