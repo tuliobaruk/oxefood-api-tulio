@@ -1,6 +1,7 @@
 package br.com.ifpe.oxefood.api.cliente;
 
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,10 +21,16 @@ import br.com.ifpe.oxefood.modelo.cliente.ClienteService;
 import br.com.ifpe.oxefood.modelo.cliente.EnderecoCliente;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/api/cliente")
 @CrossOrigin
+@Tag(
+    name = "Cliente",
+    description = "Endpoints de Cliente"
+    )
 public class ClienteController {
 
     @Autowired
@@ -32,6 +39,7 @@ public class ClienteController {
     @Autowired
     private UsuarioService usuarioService;
 
+    @Operation(summary = "Endpoint POST da entidade Cliente", description = "Endpoint responsável por inserir um cliente no sistema.")
     @PostMapping
     public ResponseEntity<Cliente> save(@RequestBody @Valid ClienteRequest clienteRequest, HttpServletRequest request) {
         Cliente cliente = clienteService.save(clienteRequest.build(), usuarioService.getCurrentUser(request));
@@ -49,7 +57,8 @@ public class ClienteController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Cliente> update(@PathVariable("id") Long id, @RequestBody @Valid ClienteRequest clienteRequest, HttpServletRequest request) {
+    public ResponseEntity<Cliente> update(@PathVariable("id") Long id,
+            @RequestBody @Valid ClienteRequest clienteRequest, HttpServletRequest request) {
         clienteService.update(id, clienteRequest.build(), usuarioService.getCurrentUser(request));
         return ResponseEntity.ok().build();
     }
